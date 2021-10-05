@@ -1,0 +1,207 @@
+﻿@model StayOver.Data.Dtos.AccommodationReadDto
+
+@{
+    ViewData["Title"] = "Edit";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h3>@Model.Title</h3>
+<hr />
+<div class="row">
+    <div class="w-100">
+        <button id="edit-images" class="btn btn-primary" type="button" data-toggle="collapse" data-target="#collapseExample"
+                aria-expanded="false" aria-controls="collapseExample">
+            Show Images
+        </button>
+
+        <div class="collapse" id="collapseExample">
+            <div class="card card-body">
+                <div class="scrollmenu">
+                    @for (int i = 0; i < Model.Gallery.Count; i++)
+                    {
+                        <div class="accommodation-image-div" id="imageDiv_@(i.ToString()) ">
+                            <div class="image-div">
+                                <img class="accommodation-image" src="~/@Model.Gallery.ElementAt(i).URL" alt="Accommodation Image">
+                            </div>
+                            <button class="deleteButton btn btn-danger mt-2" value="@Model.Gallery.ElementAt(i).GalleryModelId">Delete</button>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+
+        <form asp-action="Edit" enctype="multipart/form-data">
+
+            <div class="form-group d-flex flex-column mt-3">
+                <label class="control-label">Upload new images</label>
+
+                <input name="galleryFiles" class="btn pl-0" type="file" accept="image/*" multiple />
+            </div>
+
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <input type="hidden" asp-for="AccommodationId" />
+
+            <div class="d-flex flex-row justify-content-between flex-wrap">
+                <div class="form-group">
+                    <label asp-for="Title" class="control-label"></label>
+                    <input asp-for="Title" class="form-control edit-input" required />
+                    <span asp-validation-for="Title" class="text-danger"></span>
+                </div>
+
+                <div class="form-group">
+                    <label asp-for="City" class="control-label"></label>
+                    <select name="cityId" class="form-control edit-input" asp-items="ViewBag.CityName"></select>
+                </div>
+
+                <div class="form-group">
+                    <label asp-for="Address" class="control-label"></label>
+                    <input asp-for="Address" class="form-control edit-input" required />
+                    <span asp-validation-for="Address" class="text-danger"></span>
+                </div>
+            </div>
+            <div class="d-flex flex-row justify-content-between flex-wrap align-content-center">
+                <div class="form-group edit-input">
+                    <label asp-for="Price" class="control-label"></label>
+                    <input asp-for="Price" class="form-control" required />
+                    <span asp-validation-for="Price" class="text-danger"></span>
+                </div>
+
+                <div class="form-group d-flex flex-column ml-2">
+                    <label class="control-label">Guest Number</label>
+                    <select asp-for="GuestNumber" class="custom-select edit-input">
+                        <option value=1>1 guest</option>
+                        @for (int i = 2; i <= 10; i++)
+                        {
+                            <option value=@i>@i guests</option>
+                        }
+                    </select>
+                </div>
+
+
+                <div class="edit-input">
+                    <div class="form-group form-check">
+                        <label class="form-check-label">
+                            <input class="form-check-input" asp-for="Active" /> @Html.DisplayNameFor(model => model.Active)
+                        </label>
+                    </div>
+
+                    <div class="form-group form-check">
+                        <label class="form-check-label">
+                            <input class="form-check-input" asp-for="ShowPhoneNumber" /> @Html.DisplayNameFor(model => model.ShowPhoneNumber)
+                        </label>
+                    </div>
+                </div>
+
+            </div>
+
+            <div class="form-group">
+                <label asp-for="Description" class="control-label"></label>
+                <textarea asp-for="Description" class="form-control w-100" rows="10" cols="50" name="Description">
+                Enter details here...
+            </textarea>
+                <span asp-validation-for="Description" class="text-danger"></span>
+            </div>
+
+
+            <div class="form-group edit-button">
+                <input type="submit" value="Save" class="btn btn-primary edit-button" />
+            </div>
+        </form>
+
+        <form asp-action="Delete">
+            <input type="hidden" name="Id" asp-for="AccommodationId" />
+            <input type="submit" value="Delete" id="deleteAccommodationBtn" class="btn btn-danger edit-button" /> 
+        </form>
+    </div>
+</div>
+
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    <script>
+        $(".deleteButton").click(function (event) {
+            event.preventDefault();
+            var id = $(this).attr("value");
+            var element = $(this);
+
+            $.ajax({
+                url: "/Accommodations/DeleteImage/",
+                type: 'POST',
+                data: JSON.stringify(id),
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                success: function (data) {
+                    element.parents('.accommodation-div').remove();
+                },
+                error: function (error) {
+                    console.error(error.responseText);
+                }
+            });
+        });
+
+        $("#deleteAccommodationBtn").click(function (event) {
+            var answer = window.confirm("Are you sure you want to delete this accommodation?");
+            if (!answer) {
+                event.preventDefault();
+            }
+        });
+
+        var editImagesOpened = false;
+
+        $("#edit-images").click(function (event) {
+            if (!editImagesOpened) {
+                $("#edit-images").html("Hide Images");
+                editImagesOpened = true;
+            } else {
+                $("#edit-images").html("Show Images");
+                editImagesOpened = false;
+            }
+        });
+    </script>
+
+}
+
+<style>
+    .edit-input {
+        width: 300px;
+    }
+
+    .edit-button {
+        width: 100px;
+    }
+
+    short-edit-input {
+        width: 150px;
+    }
+
+    div.scrollmenu {
+        overflow: auto;
+        white-space: nowrap;
+    }
+
+        div.scrollmenu .accommodation-div .image-div {
+            color: white;
+            text-align: center;
+            height: 100px;
+            width: 100px;
+            overflow: hidden;
+            text-decoration: none;
+        }
+
+    .accommodation-image-div {
+        display: inline-block;
+        width: auto;
+    }
+
+    .accommodation-image {
+        height: 100%;
+    }
+
+    .collapse {
+        margin-bottom: 15px;
+    }
+
+    .col-md-4 button {
+        margin-bottom: 15px;
+    }
+</style>

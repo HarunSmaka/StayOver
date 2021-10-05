@@ -1,0 +1,66 @@
+﻿@model StayOver.Helper.PaginatedList<StayOver.Data.Dtos.ReservationReadDto>
+@{
+    ViewData["Title"] = "Visitors Reservations";
+    
+    var prevDisabled = !Model.HasPreviousPage ? "disabled" : "";
+    var nextDisabled = !Model.HasNextPage ? "disabled" : "";    
+}
+
+<p>
+    <a asp-action="VisitorsReservationsHistory">Reservation history</a>
+</p>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                <a asp-action="VisitorsReservations">Created At</a>
+            </th>
+            <th>
+                <a asp-action="VisitorsReservations" name="parepare" asp-route-sortOrder="@ViewData["TitleSortParm"]">Title</a>
+            </th>
+            <th>
+                <a asp-action="VisitorsReservations" asp-route-sortOrder="@ViewData["CheckInSortParm"]">Check In</a>
+            </th>
+            <th>
+                <a asp-action="VisitorsReservations" asp-route-sortOrder="@ViewData["CheckOutSortParm"]">Check Out</a>
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.CreatedAt)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Accommodation.Title)
+                </td>
+                <td>
+                    @Convert.ToString(string.Format("{0:dd/MM/yyyy}", item.CheckIn))
+                </td>
+                <td>
+                    @Convert.ToString(string.Format("{0:dd/MM/yyyy}", item.CheckOut))
+                </td>
+                <td>
+                    <a class="btn btn-info" asp-controller="Reservations" asp-action="Index" asp-route-id="@item.Accommodation.AccommodationId">Details</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+<a asp-action="VisitorsReservations"
+   asp-route-sortOrder="@ViewData["CurrentSort"]"
+   asp-route-pageNumber="@(Model.PageIndex - 1)"
+   class="btn btn-default @prevDisabled">
+    Previous
+</a>
+<a asp-action="VisitorsReservations"
+   asp-route-sortOrder="@ViewData["CurrentSort"]"
+   asp-route-pageNumber="@(Model.PageIndex + 1)"
+   class="btn btn-default @nextDisabled">
+    Next
+</a>

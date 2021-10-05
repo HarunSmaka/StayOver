@@ -1,0 +1,77 @@
+﻿@model StayOver.Helper.PaginatedList<StayOver.Areas.Identity.Data.ApplicationUser>
+
+@{
+    ViewData["Title"] = "Administration Dashboard";
+
+    var prevDisabled = !Model.HasPreviousPage ? "disabled" : "";
+    var nextDisabled = !Model.HasNextPage ? "disabled" : "";
+}
+
+<h2>Administration Dashboard</h2>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>User</th>
+            <th>Email</th>
+            <th></th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.FirstName) @Html.DisplayFor(modelItem => item.LastName)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Email)
+                </td>
+                <td>
+                    @if (item.Accommodations.Count > 0)
+                    {
+                        <a asp-controller="Accommodations" asp-action="Index" asp-route-id="@item.Id"> Accommodations (@Html.DisplayFor(modelItem => item.Accommodations.Count))</a>
+                    }
+                    else
+                    {
+                        <text>Accommodations (</text> @Html.DisplayFor(modelItem => item.Accommodations.Count)<text>)</text>
+                    }
+                </td>
+                <td>
+                    @if (item.Reservations.Count > 0)
+                    {
+                        <a asp-controller="Reservations" asp-action="MyReservations" asp-route-id="@item.Id"> Reservations (@Html.DisplayFor(modelItem => item.Reservations.Count))</a>
+                    }
+                    else
+                    {
+                        <text>Reservations (</text> @Html.DisplayFor(modelItem => item.Reservations.Count)<text>)</text>
+                    }
+                </td>
+                <td>
+                    @if (item.Reviews.Count > 0)
+                    {
+                        <a asp-controller="Reviews" asp-action="Index" asp-route-id="@item.Id"> Reviews (@Html.DisplayFor(modelItem => item.Reviews.Count))</a>
+                    }
+                    else
+                    {
+                        <text>Reviews (</text> @Html.DisplayFor(modelItem => item.Reviews.Count)<text>)</text>
+                    }
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+<a asp-action="Index"
+   asp-route-sortOrder="@ViewData["CurrentSort"]"
+   asp-route-pageNumber="@(Model.PageIndex - 1)"
+   class="btn btn-default @prevDisabled">
+    Previous
+</a>
+<a asp-action="Index"
+   asp-route-sortOrder="@ViewData["CurrentSort"]"
+   asp-route-pageNumber="@(Model.PageIndex + 1)"
+   class="btn btn-default @nextDisabled">
+    Next
+</a>

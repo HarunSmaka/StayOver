@@ -1,0 +1,54 @@
+﻿
+.description {
+    height: 50px;
+    text-overflow: ellipsis;
+    overflow: hidden;
+}
+
+.accommodation-div {
+    margin-bottom: 20px;
+    padding: 5px;
+    height: 200px;
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.image-div {
+    height: 200px;
+    min-width: 200px;
+    overflow: hidden;
+    border-radius: 8px;
+    margin-right: 10px;
+    text-align: center;
+}
+
+.image-div img {
+    height: 100%;
+    width: 100%;
+}
+
+.details-div {
+    width: 90%;
+    text-align: left;
+    vertical-align: top;
+}
+
+.about-accommodation {
+    width: 100%;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    justify-items: stretch;
+}
+
+
+
+.button a {
+    width: 73px;
+}
+
+.owner-buttons {
+    width: 73px;
+}

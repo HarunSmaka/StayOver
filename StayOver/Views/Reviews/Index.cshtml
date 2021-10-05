@@ -1,0 +1,117 @@
+﻿@model StayOver.Helper.PaginatedList<StayOver.Data.Dtos.ReviewReadDto>
+
+@{
+    ViewData["Title"] = "Reviews";
+
+    var prevDisabled = !Model.HasPreviousPage ? "disabled" : "";
+    var nextDisabled = !Model.HasNextPage ? "disabled" : "";
+}
+
+@if (Model.Count() > 0)
+{
+    <h2>@Model.ElementAt(0).User.FirstName @Model.ElementAt(0).User.LastName's reviews</h2>
+    @foreach (var item in Model)
+    {
+
+        <div class="review-div">
+            <hr />
+            <div class="d-flex row justify-content-between ml-3">
+                <div class="row">
+                    <p class="review-user">
+                        @Html.Raw(item.User.FirstName + " " + item.User.LastName) <span class=".text-secondary">(@Convert.ToString(string.Format("{0:dd/MM/yyyy}", item.PublishedDate)))</span>
+                    </p>
+                </div>
+                <div>
+                    @for (int i = 1; i <= item.Rating; i++)
+                    {
+                        <span class="starGlowN"></span>
+                    }
+                </div>
+            </div>
+            <p>@Html.Raw(item.Comment.Replace("\n", "<br/>"))</p>
+
+            <button class="AdminDeleteReviewButton btn btn-danger" value="@item.ReservationId">Delete</button>
+        </div>
+        <a asp-action="Index"
+           asp-route-sortOrder="@ViewData["CurrentSort"]"
+           asp-route-pageNumber="@(Model.PageIndex - 1)"
+           class="btn btn-default @prevDisabled">
+            Previous
+        </a>
+        <a asp-action="Index"
+           asp-route-sortOrder="@ViewData["CurrentSort"]"
+           asp-route-pageNumber="@(Model.PageIndex + 1)"
+           class="btn btn-default @nextDisabled">
+            Next
+        </a>
+    }
+}
+else
+{
+    <h2> Upss... No reviews found :(</h2>
+}
+
+
+<script>
+    $(".AdminDeleteReviewButton").click(function (event) {
+        var review = $(this);
+        var id = $(this).attr("value");
+
+        $.ajax({
+            url: "/Reviews/DeleteReview/",
+            type: 'POST',
+            data: JSON.stringify(id),
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            success: function (data) {
+                review.closest('.review-div').remove();
+            },
+            error: function (error) {
+                console.error(error.responseText);
+            }
+        });
+    });
+</script>
+
+<style>
+
+    .commentBox {
+        background-color: #efefef;
+        padding: 10px;
+        border-radius: 10px;
+    }
+
+    .starFade {
+        background-image: url('/accommodations/others/StarFade.png');
+        background-size: 25px 25px;
+        min-width: 25px;
+        min-height: 25px;
+        display: inline-block;
+        cursor: pointer;
+    }
+
+    .starFadeN {
+        background-image: url('/accommodations/others/StarFade.png');
+        background-size: 25px 25px;
+        min-width: 25px;
+        min-height: 25px;
+        display: inline-block;
+    }
+
+    .starGlow {
+        background-image: url('/accommodations/others/StarGlow.png');
+        background-size: 25px 25px;
+        min-width: 25px;
+        min-height: 25px;
+        display: inline-block;
+        cursor: pointer;
+    }
+
+    .starGlowN {
+        background-image: url('/accommodations/others/StarGlow.png');
+        background-size: 25px 25px;
+        min-width: 25px;
+        min-height: 25px;
+        display: inline-block;
+    }
+</style>

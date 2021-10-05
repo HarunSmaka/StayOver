@@ -1,0 +1,106 @@
+﻿@model StayOver.Data.Dtos.AccommodationCreateDto
+
+@{
+    ViewData["Title"] = "Create";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h1>Create</h1>
+
+<h4>Accommodation</h4>
+<hr />
+<div class="row">
+    <div class="w-100">
+        <form asp-action="Create" enctype="multipart/form-data">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div class="form-group d-flex flex-column mt-3">
+                <label class="control-label">Upload new images</label>
+
+                <input name="galleryFiles" class="btn pl-0" type="file" accept="image/*" multiple />
+            </div>
+
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+            <div class="d-flex flex-row justify-content-between flex-wrap">
+                <div class="form-group">
+                    <label asp-for="Title" class="control-label"></label>
+                    <input asp-for="Title" class="form-control edit-input" required />
+                    <span asp-validation-for="Title" class="text-danger"></span>
+                </div>
+
+                <div class="form-group">
+                    <label asp-for="CityId" class="control-label"></label>
+                    <select asp-for="CityId" class="form-control edit-input" asp-items="ViewBag.CityId"></select>
+                </div>
+
+                <div class="form-group">
+                    <label asp-for="Address" class="control-label"></label>
+                    <input asp-for="Address" class="form-control edit-input" required />
+                    <span asp-validation-for="Address" class="text-danger"></span>
+                </div>
+            </div>
+            <div class="d-flex flex-row justify-content-between flex-wrap align-content-center">
+                <div class="form-group edit-input">
+                    <label asp-for="Price" class="control-label"></label>
+                    <input asp-for="Price" class="form-control" required />
+                    <span asp-validation-for="Price" class="text-danger"></span>
+                </div>
+
+                <div class="form-group d-flex flex-column ml-2">
+                    <label class="control-label">Guest Number</label>
+                    <select asp-for="GuestNumber" class="custom-select edit-input">
+                        <option value=1>1 guest</option>
+                        @for (int i = 2; i <= 10; i++)
+                        {
+                            <option value=@i>@i guests</option>
+                        }
+                    </select>
+                    <span asp-validation-for="GuestNumber" class="text-danger"></span>
+                </div>
+
+
+                <div class="edit-input">
+                    <div class="form-group form-check">
+                        <label class="form-check-label">
+                            <input class="form-check-input" asp-for="Active" checked /> @Html.DisplayNameFor(model => model.Active)
+                        </label>
+                    </div>
+
+                    <div class="form-group form-check">
+                        <label class="form-check-label">
+                            <input class="form-check-input" asp-for="ShowPhoneNumber" checked /> @Html.DisplayNameFor(model => model.ShowPhoneNumber)
+                        </label>
+                    </div>
+                </div>
+
+            </div>
+
+            <div class="form-group">
+                <label asp-for="Description" class="control-label"></label>
+                <textarea asp-for="Description" class="form-control" rows="10" cols="60" name="Description">
+                Enter details here...
+            </textarea>
+                <span asp-validation-for="Description" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <input type="submit" value="Create" class="btn btn-primary" />
+            </div>
+        </form>
+    </div>
+</div>
+
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}
+
+
+<style>
+    .edit-input {
+        width: 300px;
+    }
+
+    .edit-button {
+        width: 100px;
+    }
+</style>

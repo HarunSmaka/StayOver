@@ -1,0 +1,200 @@
+﻿@model StayOver.Helper.PaginatedList<StayOver.Data.Dtos.AccommodationReadDto>
+
+@{
+    ViewData["Title"] = "Home Page";
+}
+
+<link href="~/css/accommodationLayout.css" rel="stylesheet" />
+
+<div class="d-flex flex-row flex-wrap justify-content-center @*align-items-center*@ p-5 search-div">
+    <div class="text-center">
+        <h1 class="display-4 font-weight-bolder text-white">Welcome</h1>
+    </div>
+
+    <div class="d-flex flex-row flex-wrap justify-content-center">
+        <div class="inner-addon left-addon mb-2">
+            <i class="fas fa-search icon"></i>
+            <input class="searchInput form-control mr-2" id="titleSearch" name="titleSearch" placeholder="Title" autocomplete="off" />
+        </div>
+
+
+        <div class="inner-addon left-addon mb-2">
+            <i class="fas fa-map-marker-alt icon"></i>
+            <input class="searchInput form-control  mr-2" id="citySearch" name="citySearch" placeholder="City" autocomplete="off" />
+        </div>
+
+        <div class="inner-addon left-addon mb-2">
+            <i class="fas fa-user icon"></i>
+            <select id="guestNumber" class="custom-select searchInput mr-2">
+                <option value="0">Guest number</option>
+                <option value=1>1 guest</option>
+                @for (int i = 2; i <= 10; i++)
+                {
+                    <option value=@i>@i guests</option>
+                }
+            </select>
+        </div>
+
+        <div class="inner-addon left-addon mb-2  mr-2">
+            <i class="fas fa-calendar-alt icon"></i>
+            <div class="form-group">
+                <input id="datepicker" class="form-control custom-select searchInput" placeholder="Select Date..">
+            </div>
+        </div>
+
+    </div>
+</div>
+<hr />
+
+<div id="AccommodationsPVDiv">
+    @await Html.PartialAsync("_AccommdationsPartialView")
+
+</div>
+
+<script>
+
+</script>
+
+
+<script>
+    var selectedCheckInValue;
+    var selectedCheckOutValue;
+
+    var config = {
+
+        minDate: "today",
+        maxDate: new Date().fp_incr(365), // 365 days from now
+        dateFormat: "d-M-y",
+        mode: "range",
+
+        onClose: function (selectedDates) {
+            var differentDates = false;
+            var definedDates = false;
+            selectedCheckInValue = "";
+            selectedCheckOutValue = "";
+
+            if (selectedDates[0] != undefined && selectedDates[1] != undefined) {
+                definedDates = true;
+                differentDates = selectedDates[0].toString().localeCompare(selectedDates[1].toString());
+            } else {
+                callSearchMethod();
+            }
+
+            if (definedDates && differentDates) {
+                selectedCheckInValue = selectedDates[0];
+                selectedCheckOutValue = selectedDates[1];
+
+                callSearchMethod();
+            }
+        }
+    }
+
+    flatpickr("#datepicker", config);
+
+    let elementsArray = document.querySelectorAll(".searchInput");
+    let timeout = null;
+
+    elementsArray.forEach(function (elem) {
+        elem.addEventListener("keyup", function () {
+            callSearchMethod();
+        });
+    });
+
+    $('select').on('change', function () {
+        callSearchMethod();
+    });
+
+    function callSearchMethod() {
+        // Clear existing timeout
+        clearTimeout(timeout);
+
+        // Reset the timeout to start again
+        timeout = setTimeout(function () {
+            LiveAccommodationPreview()
+        }, 800);
+    }
+
+    function LiveAccommodationPreview(pageIndex) {
+        console.log("LS pokrenut");
+
+        //Get the input value
+        let titleSearchValue = document.getElementById('titleSearch').value.trim();
+        let citySearchValue = document.getElementById('citySearch').value.trim();
+        let guestNumberValue = document.getElementById('guestNumber').value.trim();
+
+        $.ajax({
+            type: "Post",
+            url: "/Home/LiveAccommodationPreview",
+            data: {
+                titleSearch: titleSearchValue,
+                citySearch: citySearchValue,
+                guestNumber: guestNumberValue,
+                selectedCheckIn: selectedCheckInValue,
+                selectedCheckOut: selectedCheckOutValue,
+                pageNumber: pageIndex
+
+            },
+            datatype: "html",
+            success: function (data) {
+                console.log("success!!!");
+                $('#AccommodationsPVDiv').empty();
+                $('#AccommodationsPVDiv').html(data);
+            }
+        });
+    }
+</script>
+
+<style>
+    .description {
+        height: 50px;
+        text-overflow: ellipsis;
+        overflow: hidden;
+    }
+    .searchInput {
+        width: 230px;
+        background: white !important;
+    }
+    .inner-addon {
+        position: relative;
+    }
+    .icon {
+        color: #495057;
+    }
+
+    /* style icon */
+    .inner-addon .icon {
+        position: absolute;
+        padding: 10px;
+        pointer-events: none;
+    }
+
+    /* align icon in search inputs */
+    .left-addon .icon {
+        left: 0px;
+    }
+
+
+    /* add padding  */
+    .left-addon input {
+        padding-left: 30px;
+    }
+
+    #guestNumber {
+        padding-left: 30px;
+    }
+
+    .search-div {
+        width: 100%;
+        height: 600px;
+        background-image: url('/accommodations/others/SearchBackground.jpg');
+        background-color: #cccccc;
+        background-size:cover;
+    }
+
+    #navigation-link {
+        font-size: 22px;
+        font-weight:400;
+        color: white;
+        text-decoration: inherit;
+    }
+</style>
