@@ -51,9 +51,9 @@ namespace StayOver.Services
             return _repo.GetVisitorsReservations(visitorId);
         }
 
-        public async Task<ReservationReadDto> GetReservationByIdAsync(int accommodationId)
+        public async Task<ReservationReadDto> GetReservationByIdAsync(int reservationId)
         {
-            var result = await _repo.GetReservationByIdAsync(accommodationId);
+            var result = await _repo.GetReservationByIdAsync(reservationId);
             var reservation = _mapper.Map<ReservationReadDto>(result);
             return reservation;
         }

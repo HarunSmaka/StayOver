@@ -2,6 +2,7 @@
 @{
     ViewData["Title"] = "Reservation";
     var isReviewed = ViewBag.isReviewed;
+    var isVisiter = ViewBag.isVisiter;
 }
 
 <h1 class="text-primary font-weight-bolder">@Html.DisplayFor(model => model.Accommodation.Title)</h1>
@@ -21,93 +22,97 @@
         </div>
     }
 
-<div class="ml-3">
-    <a class="btn-link font-weight-bolder" asp-controller="Accommodations" asp-action="Details" asp-route-id="@Model.Accommodation.AccommodationId">
-        <h3 class="mt-2">@Html.DisplayFor(model => model.Accommodation.Title) by @Html.DisplayFor(model => model.Accommodation.Owner.FirstName) @Html.DisplayFor(model => model.Accommodation.Owner.LastName)</h3>
-    </a>
+    <div class="ml-3">
+        <a class="btn-link font-weight-bolder" asp-controller="Accommodations" asp-action="Details" asp-route-id="@Model.Accommodation.AccommodationId">
+            <h3 class="mt-2">@Html.DisplayFor(model => model.Accommodation.Title) by @Html.DisplayFor(model => model.Accommodation.Owner.FirstName) @Html.DisplayFor(model => model.Accommodation.Owner.LastName)</h3>
+        </a>
 
-    <div class="d-inline-flex text-secondary">
-        <p class="my-2"><i class="fas fa-map-marker-alt mr-1"></i> @Html.DisplayFor(model => model.Accommodation.City.Name) </p>
-        <p class="mx-2 my-2">|</p>
-        <p class="my-2">@Html.DisplayFor(model => model.Accommodation.Address)</p>
+        <div class="d-inline-flex text-secondary">
+            <p class="my-2"><i class="fas fa-map-marker-alt mr-1"></i> @Html.DisplayFor(model => model.Accommodation.City.Name) </p>
+            <p class="mx-2 my-2">|</p>
+            <p class="my-2">@Html.DisplayFor(model => model.Accommodation.Address)</p>
+        </div>
+        <br />
+        <div class="d-inline-flex text-secondary">
+            @if (Model.Accommodation.GuestNumber == 1)
+            {
+                <p class="my-2"><i class="fas fa-user mr-1"></i> For @Html.DisplayFor(modelItem => Model.Accommodation.GuestNumber) person</p>
+
+            }
+            else
+            {
+                <p class="my-2"><i class="fas fa-user mr-1"></i> For @Html.DisplayFor(modelItem => Model.Accommodation.GuestNumber) people</p>
+            }
+
+            <p class="mx-2 my-2 ">|</p>
+            <p class="my-2"><i class="fas fa-coins mr-1"></i> $@Html.DisplayFor(modelItem => Model.Accommodation.Price) per night</p>
+        </div>
+        @if (Model.Accommodation.ShowPhoneNumber)
+        {
+            <p class="my-2 text-secondary"><i class="fas fa-phone-alt mr-1"></i> $@Html.DisplayFor(modelItem => Model.Accommodation.Owner.PhoneNumber)</p>
+        }
+
+        <table class="table mt-3">
+            <thead>
+                <tr>
+                    <th>
+                        Check in
+                    </th>
+                    <th class="font-weight-normal">
+                        @Convert.ToString(string.Format("{0:dd/MM/yyyy}", Model.CheckIn))
+                    </th>
+                </tr>
+                <tr>
+                    <th>
+                        Check out
+                    </th>
+                    <th class="font-weight-normal">
+                        @Convert.ToString(string.Format("{0:dd/MM/yyyy}", Model.CheckOut))
+                    </th>
+                </tr>
+            </thead>
+        </table>
     </div>
-    <br />
-    <div class="d-inline-flex text-secondary">
-        @if (Model.Accommodation.GuestNumber == 1)
-        {
-            <p class="my-2"><i class="fas fa-user mr-1"></i> For @Html.DisplayFor(modelItem => Model.Accommodation.GuestNumber) person</p>
-
-        }
-        else
-        {
-            <p class="my-2"><i class="fas fa-user mr-1"></i> For @Html.DisplayFor(modelItem => Model.Accommodation.GuestNumber) people</p>
-        }
-
-        <p class="mx-2 my-2 ">|</p>
-        <p class="my-2"><i class="fas fa-coins mr-1"></i> $@Html.DisplayFor(modelItem => Model.Accommodation.Price) per night</p>
-    </div>
-    @if (Model.Accommodation.ShowPhoneNumber)
-    {
-        <p class="my-2 text-secondary"><i class="fas fa-phone-alt mr-1"></i> $@Html.DisplayFor(modelItem => Model.Accommodation.Owner.PhoneNumber)</p>
-    }
-
-    <table class="table mt-3">
-        <thead>
-            <tr>
-                <th>
-                    Check in
-                </th>
-                <th class="font-weight-normal">
-                    @Convert.ToString(string.Format("{0:dd/MM/yyyy}", Model.CheckIn))
-                </th>
-            </tr>
-            <tr>
-                <th>
-                    Check out
-                </th>
-                <th class="font-weight-normal">
-                    @Convert.ToString(string.Format("{0:dd/MM/yyyy}", Model.CheckOut))
-                </th>
-            </tr>
-        </thead>
-    </table>
-</div>
 </div>
 
-<div>
-    <div class="mt-3">
-        @if (Model.CheckIn > DateTime.Now)
-        {
-            <p>Do you want to cancel your reservation?</p>
+@if (isVisiter)
+{
+    <div>
+        <div class="mt-3">
+            @if (Model.CheckIn > DateTime.Now)
+            {
+                <p>Do you want to cancel your reservation?</p>
 
-            <a class=" btn btn-danger" asp-controller="Reservations" asp-action="CancelReservation" asp-route-id="@Model.ReservationId" value="@Model.ReservationId">Cancel Reservation</a>
-        }
-        else if (Model.CheckIn < DateTime.Now && !isReviewed)
-        {
-            <partial name="_CommentBox" />
-        }
-        else
-        {
-            <h5 class="mb-2">Your review</h5>
-            <hr />
-            <div class="d-flex row justify-content-between ml-3">
-                <div class="row">
-                    <p class="review-user">
-                        @Html.Raw(Model.Review.User.FirstName + " " + Model.Review.User.LastName) <span class=".text-secondary">(@Convert.ToString(string.Format("{0:dd/MM/yyyy}", Model.Review.PublishedDate)))</span>
-                    </p>
+                <a class=" btn btn-danger" asp-controller="Reservations" asp-action="CancelReservation" asp-route-id="@Model.ReservationId" value="@Model.ReservationId">Cancel Reservation</a>
+            }
+            else if (Model.CheckIn < DateTime.Now && !isReviewed)
+            {
+                <partial name="_CommentBox" />
+            }
+            else
+            {
+                <h5 class="mb-2">Your review</h5>
+                <hr />
+                <div class="d-flex row justify-content-between ml-3">
+                    <div class="row">
+                        <p class="review-user">
+                            @Html.Raw(Model.Review.User.FirstName + " " + Model.Review.User.LastName) <span class=".text-secondary">(@Convert.ToString(string.Format("{0:dd/MM/yyyy}", Model.Review.PublishedDate)))</span>
+                        </p>
+                    </div>
+                    <div>
+                        @for (int i = 1; i <= Model.Review.Rating; i++)
+                        {
+                            <span class="starGlowN"></span>
+                        }
+                    </div>
                 </div>
-                <div>
-                    @for (int i = 1; i <= Model.Review.Rating; i++)
-                    {
-                        <span class="starGlowN"></span>
-                    }
-                </div>
-            </div>
-            <p>@Html.Raw(Model.Review.Comment.Replace("\n", "<br/>"))</p>
-            <button id="deleteButton" value="@Model.Review.ReservationId" class="btn btn-danger">Delete</button>
-        }
+                <p>@Html.Raw(Model.Review.Comment.Replace("\n", "<br/>"))</p>
+                <button id="deleteButton" value="@Model.Review.ReservationId" class="btn btn-danger">Delete</button>
+            }
+        </div>
     </div>
-</div>
+
+}
 
 <script>
     $("#deleteButton").click(function (event) {

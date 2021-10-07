@@ -26,7 +26,7 @@ namespace StayOver.Controllers
         private readonly IWebHostEnvironment _webHostEnvironment;
         private readonly IMapper _mapper;
 
-        public AccommodationsController(StayOverDbContext context, IAccommodationService accommodationService,
+        public AccommodationsController(StayOverDbContext context, IAccommodationService accommodationService, 
             IGalleryService galleryService, IReservationService reservationService,
             IWebHostEnvironment webHostEnvironment, IMapper mapper)
         {
@@ -54,14 +54,14 @@ namespace StayOver.Controllers
                     userId = Id;
                 }
 
-                var result = _accommodationService.GetUsersAccommodations(userId);
+                var result =  _accommodationService.GetUsersAccommodations(userId);
 
                 return View(await PaginatedList<AccommodationReadDto>.CreateAsync(result, pageNumber ?? 1, pageSize));
             }
             catch (Exception)
             {
                 return RedirectToAction("Error", "Home");
-            }
+            }   
         }
 
         // GET: Accommodations/Details/5
@@ -85,7 +85,7 @@ namespace StayOver.Controllers
 
                 double rating;
 
-                if (ratingCount > 0)
+                if(ratingCount > 0)
                 {
                     double ratingSum = reservationsWithReviews.Select(r => r.Review).Sum(r => r.Rating);
                     rating = Math.Round((ratingSum / ratingCount), 2);

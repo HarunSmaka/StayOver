@@ -37,6 +37,7 @@ namespace StayOver.Controllers
 
                 string startDateString = checkInDate.Substring(4, 11);
                 string endDateString = checkOutDate.Substring(4, 11);
+                ViewBag.isVisiter = true;
 
                 var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
 
@@ -61,7 +62,9 @@ namespace StayOver.Controllers
                 return RedirectToAction("Error", "Home");
             }
 
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier) ?? "";
             ViewBag.isReviewed = await _service.IsReviewedAsync(id);
+            ViewBag.isVisiter = userId == result.Visiter.Id;
 
             return View(result);
         }

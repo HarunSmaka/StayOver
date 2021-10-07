@@ -47,7 +47,7 @@
                     @Convert.ToString(string.Format("{0:dd/MM/yyyy}", item.CheckOut))
                 </td>
                 <td>
-                    <a class="btn btn-info" asp-controller="Reservations" asp-action="Index" asp-route-id="@item.Accommodation.AccommodationId">Details</a>
+                    <a class="btn btn-info" asp-controller="Reservations" asp-action="Index" asp-route-id="@item.ReservationId">Details</a>
                 </td>
             </tr>
         }
