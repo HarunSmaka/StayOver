@@ -5,7 +5,6 @@
     Layout = "~/Views/Shared/_Layout.cshtml";
 
     var pricePerNight = Model.Price;
-    var isVisitor = ViewBag.isVisitor;
     var isOwner = ViewBag.isOwner;
     var userId = ViewBag.userId;
     var reviewNumber = ViewBag.reviewNumber;
@@ -187,7 +186,7 @@
                 </div>
             </div>
             <p>@Html.Raw(reservation.Review.Comment.Replace("\n", "<br/>"))</p>
-            @if (isVisitor)
+            @if (userId == reservation.Visiter.Id)
             {
                 <button class="detailsDeleteReviewButton btn btn-danger" value="@reservation.ReservationId">Delete</button>
             }
@@ -276,10 +275,10 @@
         font-size: 20px;
     }
 
-    .review-user span {
-        font-weight: 400;
-        font-size: 16px;
-    }
+        .review-user span {
+            font-weight: 400;
+            font-size: 16px;
+        }
 
     .reservation-div {
         border-radius: 20px;

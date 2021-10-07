@@ -26,7 +26,7 @@ namespace StayOver.Controllers
         private readonly IWebHostEnvironment _webHostEnvironment;
         private readonly IMapper _mapper;
 
-        public AccommodationsController(StayOverDbContext context, IAccommodationService accommodationService, 
+        public AccommodationsController(StayOverDbContext context, IAccommodationService accommodationService,
             IGalleryService galleryService, IReservationService reservationService,
             IWebHostEnvironment webHostEnvironment, IMapper mapper)
         {
@@ -54,14 +54,14 @@ namespace StayOver.Controllers
                     userId = Id;
                 }
 
-                var result =  _accommodationService.GetUsersAccommodations(userId);
+                var result = _accommodationService.GetUsersAccommodations(userId);
 
                 return View(await PaginatedList<AccommodationReadDto>.CreateAsync(result, pageNumber ?? 1, pageSize));
             }
             catch (Exception)
             {
                 return RedirectToAction("Error", "Home");
-            }   
+            }
         }
 
         // GET: Accommodations/Details/5
@@ -81,12 +81,11 @@ namespace StayOver.Controllers
                 var result = await _accommodationService.GetAccommodationByIdAsync(id);
                 var reservationsWithReviews = result.Reservations.Where(r => r.Review != null);
                 var ratingCount = reservationsWithReviews.Select(r => r.Review).Count();
-                var isVisitor =  result.Reservations.Where(res => res.Visiter.Id == userId).Any();
                 var isOwner = result.Owner.Id == userId;
 
                 double rating;
 
-                if(ratingCount > 0)
+                if (ratingCount > 0)
                 {
                     double ratingSum = reservationsWithReviews.Select(r => r.Review).Sum(r => r.Rating);
                     rating = Math.Round((ratingSum / ratingCount), 2);
@@ -98,7 +97,6 @@ namespace StayOver.Controllers
 
                 ViewBag.reservationsWithReviews = reservationsWithReviews;
                 ViewBag.rating = rating;
-                ViewBag.isVisitor = isVisitor;
                 ViewBag.isOwner = isOwner;
                 ViewBag.reviewNumber = ratingCount;
 
