@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using StayOver.Areas.Identity.Data.Constants;
 using StayOver.Data;
 using StayOver.Data.Dtos;
 using StayOver.Helper;
@@ -138,8 +139,6 @@ namespace StayOver.Controllers
                 return RedirectToAction("Error", "Home");
             }
 
-
-
             ViewData["CityName"] = new SelectList(_context.Set<City>(), "CityId", "Name");
 
             return View(accommodation);
@@ -152,7 +151,7 @@ namespace StayOver.Controllers
             {
                 return NotFound();
             }
-
+            ViewBag.isAdmin = User.IsInRole("Admin");
             var result = await _accommodationService.GetAccommodationByIdAsync(id);
 
             if (result == null)
@@ -170,7 +169,7 @@ namespace StayOver.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, [Bind("AccommodationId,Title,Price,Address,Description,Active,ShowPhoneNumber,GuestNumber")] AccommodationUpdateDto accommodation, int cityId, IFormFileCollection galleryFiles)
         {
-            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);         
 
             if (ModelState.IsValid && userId != null)
             {
@@ -224,7 +223,7 @@ namespace StayOver.Controllers
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
             try
-            {
+            {                
                 var result = await _accommodationService.DeleteAccommodationAsync(id);
 
                 if (!result)
@@ -234,8 +233,7 @@ namespace StayOver.Controllers
             }
             catch (Exception)
             {
-
-                return RedirectToAction("Error", "Home");
+                 return RedirectToAction("Error", "Home");
             }
 
             return RedirectToAction(nameof(Index));

@@ -54,7 +54,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="wwwroot\accommodations\gallery\" />
     <Folder Include="wwwroot\lib\node_modules\" />
   </ItemGroup>
 

@@ -1,5 +1,4 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using StayOver.Data.Dtos;
 using StayOver.Models;
 
 namespace StayOver.Data
@@ -30,12 +29,6 @@ namespace StayOver.Data
             builder.Entity<City>().HasData(new City { CityId = 19, Name = "Zenica" });
             builder.Entity<City>().HasData(new City { CityId = 20, Name = "Zvornik" });
 
-            return builder;
-        }
-
-        public static ModelBuilder SeedAccommodations(this ModelBuilder builder)
-        {
-            builder.Entity<Accommodation>().HasData(new Accommodation { AccommodationId = 1,   });
             return builder;
         }
     }

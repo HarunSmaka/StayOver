@@ -9,6 +9,7 @@ using System.Threading.Tasks;
 
 namespace StayOver.Controllers
 {
+    [Authorize(Roles = "Admin")]
     public class AdministrationController : Controller
     {
         private readonly IAdminService _service;

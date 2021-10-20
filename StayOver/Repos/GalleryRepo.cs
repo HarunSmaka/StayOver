@@ -49,7 +49,7 @@ namespace StayOver.Repos
 
         public async Task DeleteGalleryAsync(int accommodationId, string webRootPath)
         {
-            var galery = await _context.Galleries.Where(g => g.Accommodation.AccommodationId == accommodationId).ToListAsync();
+            var galery = await _context.Galleries.AsNoTracking().Where(g => g.Accommodation.AccommodationId == accommodationId).ToListAsync();
 
             if (galery.Count > 0)
             {

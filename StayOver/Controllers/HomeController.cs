@@ -14,7 +14,6 @@ using System.Threading.Tasks;
 
 namespace StayOver.Controllers
 {
-    //[Authorize]
     [AllowAnonymous]
     public class HomeController : Controller
     {
@@ -39,7 +38,6 @@ namespace StayOver.Controllers
         [HttpPost]
         public async Task<IActionResult> LiveAccommodationPreview(int? pageNumber, string titleSearch, string citySearch, int guestNumber, string selectedCheckIn, string selectedCheckOut)
         {
-            ViewBag.controller = "LiveSearch";
             int pageSize = 3;
             var startDate = string.IsNullOrEmpty(selectedCheckIn) ? DateTime.MaxValue : DateTime.Parse(selectedCheckIn.Substring(4, 11));
             var endDate = string.IsNullOrEmpty(selectedCheckOut) ? DateTime.MinValue : DateTime.Parse(selectedCheckOut.Substring(4, 11));

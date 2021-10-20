@@ -5,6 +5,7 @@ using StayOver.Data.Dtos;
 using StayOver.Models;
 using StayOver.Repos.Interfaces;
 using System;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -13,11 +14,13 @@ namespace StayOver.Repos
     public class AccommodationRepo : IAccommodationRepo
     {
         private readonly StayOverDbContext _context;
+        private readonly IGalleryRepo _galleryRepo;
         private readonly IWebHostEnvironment _webHostEnvironment;
 
-        public AccommodationRepo(StayOverDbContext context, IWebHostEnvironment webHostEnvironment)
+        public AccommodationRepo(StayOverDbContext context, IGalleryRepo galleryRepo, IWebHostEnvironment webHostEnvironment)
         {
             _context = context;
+            _galleryRepo = galleryRepo;
             _webHostEnvironment = webHostEnvironment;
         }
 
@@ -96,7 +99,13 @@ namespace StayOver.Repos
 
         public async Task<bool> DeleteAccommodationAsync( int id)
         {
-            var accommodation = await GetAccommodationByIdAsync(id);
+            var accommodation =  _context.
+                Accommodations
+                .AsNoTracking()
+                .Include(a => a.Gallery)
+                .Include(a => a.Reservations)
+                .Where(a => a.AccommodationId == id)
+                .Single();
 
             foreach (var item in accommodation.Gallery)
             {
@@ -104,6 +113,7 @@ namespace StayOver.Repos
             }
 
             _context.Accommodations.Remove(accommodation);
+
             return await _context.SaveChangesAsync() >= 0;
         }
 
@@ -121,13 +131,6 @@ namespace StayOver.Repos
                   || (r.CheckIn < startDate && r.CheckOut > startDate)
                   );
             }
-            var bookings22 = _context.Reservations
-              .Where(r =>
-                 (r.CheckIn >= startDate && r.CheckIn < endDate)
-              || (r.CheckIn >= startDate && r.CheckOut < endDate)
-              || (r.CheckIn < startDate && r.CheckOut > endDate)
-              || (r.CheckIn < startDate && r.CheckOut > startDate)
-              ).ToList();
 
             var result = _context
                 .Accommodations.AsNoTracking()

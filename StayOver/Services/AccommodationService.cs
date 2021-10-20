@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Microsoft.AspNetCore.Hosting;
 using StayOver.Data.Dtos;
 using StayOver.Models;
 using StayOver.Repos.Interfaces;
@@ -15,14 +16,15 @@ namespace StayOver.Services
         private readonly IAccommodationRepo _repo;
         private readonly IGalleryService _galleryService;
         private readonly IMapper _mapper;
+        private readonly IWebHostEnvironment _webHostEnvironment;
 
-        public AccommodationService(IAccommodationRepo repo, IGalleryService galleryService, IMapper mapper)
+        public AccommodationService(IAccommodationRepo repo, IGalleryService galleryService, IMapper mapper, IWebHostEnvironment webHostEnvironment)
         {
             _repo = repo;
             _galleryService = galleryService;
             _mapper = mapper;
+            _webHostEnvironment = webHostEnvironment;
         }
-
 
         public async Task<AccommodationReadDto> GetAccommodationByIdAsync(int? id)
         {
@@ -36,7 +38,6 @@ namespace StayOver.Services
         {
             return _repo.GetAccommodations();
         }
-
 
         public IQueryable<AccommodationReadDto> GetUsersAccommodations(string userId)
         {
