@@ -25,14 +25,14 @@ namespace StayOver.Services
             return await _repo.GetAccommodationGalleryAsync(id);
         }
 
-        public async Task DeleteGalleryAsync(int accommodationId, string webRootPath)
+        public async Task DeleteGalleryAsync(int accommodationId)
         {
-            await _repo.DeleteGalleryAsync(accommodationId, webRootPath);
+            await _repo.DeleteGalleryAsync(accommodationId);
         }
 
-        public async Task DeleteGalleryImageAsync(int imageId, string webRootPath)
+        public async Task DeleteGalleryImageAsync(int imageId)
         {
-            await _repo.DeleteGalleryImageAsync(imageId, webRootPath);
+            await _repo.DeleteGalleryImageAsync(imageId);
         }
     }
 }

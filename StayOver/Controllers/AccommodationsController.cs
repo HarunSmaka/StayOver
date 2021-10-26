@@ -4,7 +4,6 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
-using StayOver.Areas.Identity.Data.Constants;
 using StayOver.Data;
 using StayOver.Data.Dtos;
 using StayOver.Helper;
@@ -24,18 +23,16 @@ namespace StayOver.Controllers
         private readonly IAccommodationService _accommodationService;
         private readonly IGalleryService _galleryService;
         private readonly IReservationService _reservationService;
-        private readonly IWebHostEnvironment _webHostEnvironment;
         private readonly IMapper _mapper;
 
         public AccommodationsController(StayOverDbContext context, IAccommodationService accommodationService, 
             IGalleryService galleryService, IReservationService reservationService,
-            IWebHostEnvironment webHostEnvironment, IMapper mapper)
+            IMapper mapper)
         {
             _context = context;
             _accommodationService = accommodationService;
             _galleryService = galleryService;
             _reservationService = reservationService;
-            _webHostEnvironment = webHostEnvironment;
             _mapper = mapper;
         }
 
@@ -212,18 +209,19 @@ namespace StayOver.Controllers
                 return View(accommodation);
             }
             catch (Exception)
-            {
+            {                
                 return RedirectToAction("Error", "Home");
             }
         }
 
         // POST: Accommodations/Delete/5
         [HttpPost, ActionName("Delete")]
+        [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
             try
-            {                
+            {                      
                 var result = await _accommodationService.DeleteAccommodationAsync(id);
 
                 if (!result)
@@ -233,7 +231,7 @@ namespace StayOver.Controllers
             }
             catch (Exception)
             {
-                 return RedirectToAction("Error", "Home");
+                return RedirectToAction("Error", "Home");
             }
 
             return RedirectToAction(nameof(Index));
@@ -246,7 +244,7 @@ namespace StayOver.Controllers
 
             try
             {
-                await _galleryService.DeleteGalleryImageAsync(imageId, _webHostEnvironment.WebRootPath);
+                await _galleryService.DeleteGalleryImageAsync(imageId);
                 return Json("Success");
             }
             catch (Exception)

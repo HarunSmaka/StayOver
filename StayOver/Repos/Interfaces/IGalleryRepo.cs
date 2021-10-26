@@ -8,7 +8,7 @@ namespace StayOver.Repos.Interfaces
     {
         public Task AddImagesToGalleryAsync(Accommodation accommodation);
         public Task<IEnumerable<GalleryModel>> GetAccommodationGalleryAsync(int? id);
-        public Task DeleteGalleryAsync(int accommodationId, string webRootPath);
-        public Task DeleteGalleryImageAsync(int imageId, string webRootPath);
+        public Task DeleteGalleryAsync(int accommodationId);
+        public Task DeleteGalleryImageAsync(int imageId);
     }
 }

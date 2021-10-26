@@ -47,7 +47,7 @@ namespace StayOver.Repos
             return await _context.Galleries.AsNoTracking().Where(g => g.Accommodation.AccommodationId == id).ToListAsync();
         }
 
-        public async Task DeleteGalleryAsync(int accommodationId, string webRootPath)
+        public async Task DeleteGalleryAsync(int accommodationId)
         {
             var galery = await _context.Galleries.AsNoTracking().Where(g => g.Accommodation.AccommodationId == accommodationId).ToListAsync();
 
@@ -55,7 +55,7 @@ namespace StayOver.Repos
             {
                 foreach (var file in galery)
                 {
-                    var imagePath = Path.Combine(webRootPath, file.URL);
+                    var imagePath = Path.Combine(_webHostEnvironment.WebRootPath, file.URL);
 
                     // Delete image from wwwroot/accommodations/gallery
                     if (File.Exists(imagePath))
@@ -69,7 +69,7 @@ namespace StayOver.Repos
             }
         }
 
-        public async Task DeleteGalleryImageAsync(int imageId, string webRootPath)
+        public async Task DeleteGalleryImageAsync(int imageId)
         {
             var image = await _context
                 .Galleries
@@ -78,7 +78,7 @@ namespace StayOver.Repos
 
             if (image != null)
             {
-                var imagePath = Path.Combine(webRootPath, image.URL);
+                var imagePath = Path.Combine(_webHostEnvironment.WebRootPath, image.URL);
 
                 // Delete image from wwwroot/accommodations/gallery
                 if (File.Exists(imagePath))
@@ -93,13 +93,16 @@ namespace StayOver.Repos
 
         private async Task<string> UploadImage(string folderPath, IFormFile file)
         {
-            folderPath += Guid.NewGuid().ToString() + "_" + file.FileName;
+            var newFile = folderPath + Guid.NewGuid().ToString() + "_" + file.FileName;
 
-            string serverFolder = Path.Combine(_webHostEnvironment.WebRootPath, folderPath);
+            string fullPath = Path.Combine(_webHostEnvironment.WebRootPath, newFile);
 
-            await file.CopyToAsync(new FileStream(serverFolder, FileMode.Create));
+            using (var fileStream = new FileStream(fullPath, FileMode.Create))
+            {
+                await file.CopyToAsync(fileStream);
+            }
 
-            return folderPath;
+            return newFile;
         }
     }
 }

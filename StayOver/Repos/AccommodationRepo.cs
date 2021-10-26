@@ -1,11 +1,9 @@
-﻿using Microsoft.AspNetCore.Hosting;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using StayOver.Data;
 using StayOver.Data.Dtos;
 using StayOver.Models;
 using StayOver.Repos.Interfaces;
 using System;
-using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -15,13 +13,11 @@ namespace StayOver.Repos
     {
         private readonly StayOverDbContext _context;
         private readonly IGalleryRepo _galleryRepo;
-        private readonly IWebHostEnvironment _webHostEnvironment;
 
-        public AccommodationRepo(StayOverDbContext context, IGalleryRepo galleryRepo, IWebHostEnvironment webHostEnvironment)
+        public AccommodationRepo(StayOverDbContext context,IGalleryRepo galleryRepo)
         {
             _context = context;
             _galleryRepo = galleryRepo;
-            _webHostEnvironment = webHostEnvironment;
         }
 
         public IQueryable<AccommodationReadDto> GetAccommodations()
@@ -102,15 +98,11 @@ namespace StayOver.Repos
             var accommodation =  _context.
                 Accommodations
                 .AsNoTracking()
-                .Include(a => a.Gallery)
                 .Include(a => a.Reservations)
                 .Where(a => a.AccommodationId == id)
                 .Single();
 
-            foreach (var item in accommodation.Gallery)
-            {
-                _context.Galleries.Remove(item);
-            }
+            await _galleryRepo.DeleteGalleryAsync(id);
 
             _context.Accommodations.Remove(accommodation);
 

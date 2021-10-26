@@ -1,7 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using StayOver.Areas.Identity.Data;
-using StayOver.Data;
 using StayOver.Helper;
 using StayOver.Services.Interfaces;
 using System;
@@ -20,7 +19,7 @@ namespace StayOver.Controllers
         }
 
         // GET: Accommodations
-    [Authorize(Roles = "Admin")]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Index(int? pageNumber)
         {
             int pageSize = 3;
